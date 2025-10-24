@@ -29,7 +29,7 @@ public class PageController {
         this.loanRepo = loanRepo;
     }
 
-    // ===== Persons page =====
+    //Persons
     @GetMapping("/persons")
     public String showPersonsForm(Model model) {
         model.addAttribute("person", new Person()); // form-backing object
@@ -43,15 +43,15 @@ public class PageController {
         return "redirect:/persons";
     }
 
-    // ===== Cards page =====
+    //Cards
     @GetMapping("/cards")
     public String showCards(Model model) {
         model.addAttribute("cards", cardRepo.findAll());
-        model.addAttribute("persons", personRepo.findAll()); // populate dropdown
+        model.addAttribute("persons", personRepo.findAll()); // dropdown
         return "cards";
     }
 
-    // ===== Loan a card =====
+    //Loan a card
     @PostMapping("/cards/loan")
     public String loanCard(@RequestParam Long cardId,
                            @RequestParam Long personId,

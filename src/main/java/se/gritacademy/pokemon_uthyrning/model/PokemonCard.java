@@ -23,7 +23,8 @@ public class PokemonCard {
     @JsonManagedReference
     private List<Loan> loans = new ArrayList<>();
 
-    // ===== Getters and Setters =====
+
+    //
     public Long getId() {
         return id;
     }

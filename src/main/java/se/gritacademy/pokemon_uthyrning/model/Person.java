@@ -24,10 +24,10 @@ public class Person {
     private String email;
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "person-loans") // forward reference for person's loans
+    @JsonManagedReference(value = "person-loans")
     private List<Loan> loans = new ArrayList<>();
 
-    // ===== Getters and Setters =====
+    //
     public Long getId() {
         return id;
     }

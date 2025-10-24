@@ -2,7 +2,7 @@
 
 ## Beskrivning
 Detta är ett REST API byggt i Java med Spring Boot för att hantera uthyrning av Pokémon-kort.  
-Projektet innehåller tre entiteter: `PokemonCard`, `Person` och `Loan` (relation mellan person och kort).  
+Projektet innehåller tre entiteter: `PokemonCard`, `Person` och `Loan`.  
 API:et hanterar CRUD-operationer för alla entiteter och inkluderar validering, felhantering och Swagger/OpenAPI-dokumentation.
 
 ---
@@ -11,15 +11,12 @@ API:et hanterar CRUD-operationer för alla entiteter och inkluderar validering, 
 - Java 17+
 - Spring Boot 3+
 - Maven
-- JSON som dataformat (ingen XML används)
+- JSON som dataformat 
 - Swagger/OpenAPI för dokumentation
 
 ---
 
 ## Installation och körning
-
-
-Swagger UI finns på: http://localhost:8080/swagger-ui.html
 
 API Endpoints
 Personer

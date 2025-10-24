@@ -15,11 +15,11 @@ public class Loan {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JsonBackReference  // This prevents infinite recursion when serializing Loan.card
+    @JsonBackReference
     private PokemonCard card;
 
     @ManyToOne(optional = false)
-    @JsonBackReference(value = "person-loans")  // separate reference for person
+    @JsonBackReference(value = "person-loans")
     private Person person;
 
 
@@ -29,8 +29,8 @@ public class Loan {
     @NotNull(message = "End date is required")
     private LocalDateTime endAt;
 
-    // ===== Getters and Setters =====
 
+    //
     public Long getId() {
         return id;
     }

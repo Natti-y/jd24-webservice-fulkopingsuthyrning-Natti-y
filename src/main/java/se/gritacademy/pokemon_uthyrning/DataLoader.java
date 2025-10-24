@@ -16,10 +16,9 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Clear any existing data (optional)
         repo.deleteAll();
 
-        // Create Pokémon cards properly
+        // Create Pokémon cards
         PokemonCard c1 = new PokemonCard();
         c1.setNamn("Charmander");
         c1.setBeskrivning("Fire type Pokémon");
@@ -32,11 +31,9 @@ public class DataLoader implements CommandLineRunner {
         c3.setNamn("Squirtle");
         c3.setBeskrivning("Water type Pokémon");
 
-        // Save them to H2
+        //Save
         repo.save(c1);
         repo.save(c2);
         repo.save(c3);
-
-        System.out.println("Loaded 3 Pokémon cards into H2 database!");
     }
 }

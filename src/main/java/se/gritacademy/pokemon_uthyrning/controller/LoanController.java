@@ -10,9 +10,8 @@ import se.gritacademy.pokemon_uthyrning.model.PokemonCard;
 import se.gritacademy.pokemon_uthyrning.repository.LoanRepository;
 import se.gritacademy.pokemon_uthyrning.repository.PersonRepository;
 import se.gritacademy.pokemon_uthyrning.repository.PokemonCardRepository;
-
-import java.time.LocalDateTime;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/loans")
@@ -28,13 +27,13 @@ public class LoanController {
         this.cardRepo = cardRepo;
     }
 
-    // ===== GET all loans =====
+    // Get all loans
     @GetMapping
     public List<Loan> getAll() {
         return loanRepo.findAll();
     }
 
-    // ===== GET loan by ID =====
+    //Loan by id
     @GetMapping("/{id}")
     public ResponseEntity<Loan> getById(@PathVariable Long id) {
         return loanRepo.findById(id)
@@ -42,20 +41,20 @@ public class LoanController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ===== POST create new loan =====
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Loan loan) {
-        // Check if person exists
+        //if person exists
         Person person = personRepo.findById(loan.getPerson().getId())
                 .orElse(null);
         if (person == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Person not found");
 
-        // Check if card exists
+        //if card exists
         PokemonCard card = cardRepo.findById(loan.getCard().getId())
                 .orElse(null);
         if (card == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Pokemon card not found");
 
-        // Validate dates
+        //Validate
         if (loan.getStartAt().isAfter(loan.getEndAt())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Start date must be before end date");
         }
@@ -67,20 +66,19 @@ public class LoanController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLoan);
     }
 
-    // ===== PUT update existing loan =====
+    //Update
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Loan updated) {
         return loanRepo.findById(id).map(existing -> {
-            // Validate dates
+            //Validate
             if (updated.getStartAt().isAfter(updated.getEndAt())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Start date must be before end date");
             }
 
-            // Update fields
+            //Update fields
             existing.setStartAt(updated.getStartAt());
             existing.setEndAt(updated.getEndAt());
 
-            // Optionally update person and card if IDs are provided
             if (updated.getPerson() != null) {
                 Person person = personRepo.findById(updated.getPerson().getId()).orElse(null);
                 if (person == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Person not found");
@@ -97,7 +95,7 @@ public class LoanController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    // ===== DELETE loan =====
+    //Delete
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!loanRepo.existsById(id)) return ResponseEntity.notFound().build();

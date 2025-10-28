@@ -29,30 +29,25 @@ public class PageController {
         this.loanRepo = loanRepo;
     }
 
-    //Persons
-    @GetMapping("/persons")
-    public String showPersonsForm(Model model) {
-        model.addAttribute("person", new Person()); // form-backing object
-        model.addAttribute("persons", personRepo.findAll()); // existing persons
-        return "persons";
-    }
-
-    @PostMapping("/persons")
-    public String createPerson(Person person) {
-        personRepo.save(person);
-        return "redirect:/persons";
-    }
-
-    //Cards
-    @GetMapping("/cards")
-    public String showCards(Model model) {
+    // Huvudsida
+    @GetMapping("/uthyrning")
+    public String showUthyrningPage(Model model) {
+        model.addAttribute("person", new Person());
+        model.addAttribute("persons", personRepo.findAll());
         model.addAttribute("cards", cardRepo.findAll());
-        model.addAttribute("persons", personRepo.findAll()); // dropdown
-        return "cards";
+        return "uthyrning";
     }
 
-    //Loan a card
-    @PostMapping("/cards/loan")
+    // Lägg till ny person
+    @PostMapping("/uthyrning/person")
+    public String createPerson(Person person, RedirectAttributes redirectAttrs) {
+        personRepo.save(person);
+        redirectAttrs.addFlashAttribute("success", "Ny person skapad!");
+        return "redirect:/uthyrning";
+    }
+
+    // Hyra ett kort
+    @PostMapping("/uthyrning/loan")
     public String loanCard(@RequestParam Long cardId,
                            @RequestParam Long personId,
                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startAt,
@@ -63,8 +58,8 @@ public class PageController {
         Person person = personRepo.findById(personId).orElse(null);
 
         if (card == null || person == null) {
-            redirectAttrs.addAttribute("error", true);
-            return "redirect:/cards";
+            redirectAttrs.addFlashAttribute("error", "Kunde inte skapa lån – kontrollera valen.");
+            return "redirect:/uthyrning";
         }
 
         Loan loan = new Loan();
@@ -72,9 +67,9 @@ public class PageController {
         loan.setPerson(person);
         loan.setStartAt(startAt);
         loan.setEndAt(endAt);
-
         loanRepo.save(loan);
-        redirectAttrs.addAttribute("success", true);
-        return "redirect:/cards";
+
+        redirectAttrs.addFlashAttribute("success", "Lån registrerat!");
+        return "redirect:/uthyrning";
     }
 }

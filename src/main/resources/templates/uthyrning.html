@@ -3,15 +3,48 @@
 <head>
     <title>Pokémon Uthyrning</title>
     <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h1 {
+            color: #d62828;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        table, th, td {
+            border: 1px solid #999;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            display: inline;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
+
 <h1>Pokémon Uthyrning</h1>
 
 <!-- Flash-meddelanden -->
-<div th:if="${success}" style="color:green;">
+<div th:if="${success}" class="success">
     <p th:text="${success}"></p>
 </div>
-<div th:if="${error}" style="color:red;">
+<div th:if="${error}" class="error">
     <p th:text="${error}"></p>
 </div>
 
@@ -32,16 +65,20 @@
 <!-- Visa kort och låna ut -->
 <section>
     <h2>Pokémonkort</h2>
-    <table border="1">
+    <table>
         <tr>
             <th>Namn</th>
             <th>Beskrivning</th>
             <th>Aktuella lån</th>
             <th>Låna ut</th>
         </tr>
+
+        <!-- Loopa alla kort -->
         <tr th:each="card : ${cards}">
             <td th:text="${card.namn}"></td>
             <td th:text="${card.beskrivning}"></td>
+
+            <!-- Lista lån -->
             <td>
                 <ul>
                     <li th:each="loan : ${card.loans}">
@@ -52,17 +89,30 @@
                     <li th:if="${#lists.isEmpty(card.loans)}">Inga lån</li>
                 </ul>
             </td>
+
+            <!-- Formulär för att skapa nytt lån -->
             <td>
                 <form th:action="@{/uthyrning/loan}" method="post">
-                    <input type="hidden" th:name="cardId" th:value="${card.id}" />
+                    <input type="hidden" name="cardId" th:value="${card.id}" />
+
                     <select name="personId" required>
                         <option value="" disabled selected>Välj person</option>
                         <option th:each="person : ${persons}"
                                 th:value="${person.id}"
                                 th:text="${person.namn}"></option>
                     </select>
-                    <input type="datetime-local" name="startAt" required />
-                    <input type="datetime-local" name="endAt" required />
+
+                    <input type="datetime-local"
+                           name="startAt"
+                           th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"
+                           required />
+
+                    <input type="datetime-local"
+                           name="endAt"
+                           th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"
+                           required />
+
+
                     <button type="submit">Låna ut</button>
                 </form>
             </td>

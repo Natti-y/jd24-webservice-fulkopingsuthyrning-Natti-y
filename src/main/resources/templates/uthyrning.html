@@ -34,6 +34,28 @@
             color: red;
             font-weight: bold;
         }
+        button.delete {
+            background-color: #e63946;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button.delete:hover {
+            background-color: #a4161a;
+        }
+        button.add {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button.add:hover {
+            background-color: #21867a;
+        }
     </style>
 </head>
 <body>
@@ -50,30 +72,58 @@
 
 <!-- Lägg till ny person -->
 <section>
-    <h2>Lägg till ny person</h2>
+    <h2>Personer</h2>
+
     <form th:action="@{/uthyrning/person}" method="post">
         <label>Namn:</label>
         <input type="text" name="namn" required />
         <label>E-post:</label>
         <input type="email" name="email" required />
-        <button type="submit">Spara person</button>
+        <button type="submit" class="add">Lägg till person</button>
     </form>
+
+    <table>
+        <tr>
+            <th>Namn</th>
+            <th>E-post</th>
+            <th>Ta bort</th>
+        </tr>
+        <tr th:each="person : ${persons}">
+            <td th:text="${person.namn}"></td>
+            <td th:text="${person.email}"></td>
+            <td>
+                <form th:action="@{/uthyrning/person/delete/{id}(id=${person.id})}" method="post"
+                      onsubmit="return confirm('Är du säker på att du vill ta bort denna person?');">
+                    <button type="submit" class="delete">Ta bort</button>
+                </form>
+            </td>
+        </tr>
+    </table>
 </section>
 
 <hr/>
 
-<!-- Visa kort och låna ut -->
+<!-- Lägg till nya kort -->
 <section>
     <h2>Pokémonkort</h2>
+
+    <form th:action="@{/api/cards}" method="post">
+        <label>Namn:</label>
+        <input type="text" name="namn" required />
+        <label>Beskrivning:</label>
+        <input type="text" name="beskrivning" required />
+        <button type="submit" class="add">Lägg till kort</button>
+    </form>
+
     <table>
         <tr>
             <th>Namn</th>
             <th>Beskrivning</th>
             <th>Aktuella lån</th>
             <th>Låna ut</th>
+            <th>Ta bort</th>
         </tr>
 
-        <!-- Loopa alla kort -->
         <tr th:each="card : ${cards}">
             <td th:text="${card.namn}"></td>
             <td th:text="${card.beskrivning}"></td>
@@ -85,7 +135,16 @@
                         <strong th:text="${loan.person.namn}"></strong>:
                         <span th:text="${#temporals.format(loan.startAt, 'yyyy-MM-dd HH:mm')}"></span> -
                         <span th:text="${#temporals.format(loan.endAt, 'yyyy-MM-dd HH:mm')}"></span>
+
+                        <!-- Ta bort lån-knapp -->
+                        <form th:action="@{/api/loans/{id}(id=${loan.id})}" method="post"
+                              onsubmit="return confirm('Är du säker på att du vill ta bort detta lån?');"
+                              style="display:inline;">
+                            <input type="hidden" name="_method" value="delete"/>
+                            <button type="submit" class="delete">Ta bort lån</button>
+                        </form>
                     </li>
+
                     <li th:if="${#lists.isEmpty(card.loans)}">Inga lån</li>
                 </ul>
             </td>
@@ -112,8 +171,16 @@
                            th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"
                            required />
 
+                    <button type="submit" class="add">Låna ut</button>
+                </form>
+            </td>
 
-                    <button type="submit">Låna ut</button>
+            <!-- Ta bort kort -->
+            <td>
+                <form th:action="@{/api/cards/{id}(id=${card.id})}" method="post"
+                      onsubmit="return confirm('Är du säker på att du vill ta bort detta kort?');">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" class="delete">Ta bort</button>
                 </form>
             </td>
         </tr>

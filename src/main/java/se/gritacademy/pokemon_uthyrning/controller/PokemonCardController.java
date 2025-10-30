@@ -3,14 +3,16 @@ package se.gritacademy.pokemon_uthyrning.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import se.gritacademy.pokemon_uthyrning.model.PokemonCard;
 import se.gritacademy.pokemon_uthyrning.repository.PokemonCardRepository;
 
 import jakarta.validation.Valid;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/cards")
 public class PokemonCardController {
 
@@ -36,10 +38,12 @@ public class PokemonCardController {
 
     @Operation(summary = "Create a new Pokémon card")
     @PostMapping
-    public ResponseEntity<PokemonCard> create(@Valid @RequestBody PokemonCard card) {
-        PokemonCard saved = repo.save(card);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public String createCard(@Valid PokemonCard card, RedirectAttributes redirectAttrs) {
+        repo.save(card);
+        redirectAttrs.addFlashAttribute("success", "Pokémonkort tillagt!");
+        return "redirect:/uthyrning";
     }
+
 
     @Operation(summary = "Update an existing Pokémon card")
     @PutMapping("/{id}")
